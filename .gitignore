@@ -6,3 +6,4 @@ __pycache__/
 .cache/
 outputs/
 wandb/
+*_analysis_results.json

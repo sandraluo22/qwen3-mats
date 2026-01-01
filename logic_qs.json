@@ -1,0 +1,252 @@
+[
+  {
+    "id": 1,
+    "question": "Rules:\n1. All exams must last at least 90 minutes.\n2. No exam may end after 5:00 PM.\n3. Math exams require a proctor.\n\nProposed exam:\n- Math exam from 3:45 PM to 5:15 PM, with a proctor.\n\nIs this exam valid under all rules?",
+    "answer": "No"
+  },
+  {
+    "id": 2,
+    "question": "Rules:\n1. Employees must clock in before starting work.\n2. No one may work more than 8 hours per day.\n3. Managers are exempt from rule 2.\n\nScenario:\n- Alice clocks in at 9:00 AM, works until 6:00 PM, and is not a manager.\n\nIs Alice’s workday compliant with all rules?",
+    "answer": "No"
+  },
+  {
+    "id": 3,
+    "question": "Rules:\n1. All deliveries must occur on weekdays.\n2. Fragile items require special packaging.\n3. Items with special packaging cannot be shipped overnight.\n\nShipment:\n- Fragile item shipped overnight on Friday with special packaging.\n\nIs this shipment allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 4,
+    "question": "Rules:\n1. Students must submit assignments before midnight.\n2. Late submissions incur penalties.\n3. Penalties do not apply on holidays.\n\nSubmission:\n- Assignment submitted at 12:30 AM on a holiday.\n\nDoes this submission incur a penalty?",
+    "answer": "No"
+  },
+  {
+    "id": 5,
+    "question": "Rules:\n1. Every meeting must include at least two participants.\n2. Planning meetings require a manager present.\n3. Interns cannot attend planning meetings.\n\nMeeting:\n- Planning meeting with one manager only.\n\nIs this meeting allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 6,
+    "question": "Rules:\n1. All vehicles must be registered.\n2. Electric vehicles are exempt from emissions testing.\n3. Unregistered vehicles cannot be driven.\n\nVehicle:\n- Registered electric vehicle driven without emissions testing.\n\nIs this usage permitted?",
+    "answer": "Yes"
+  },
+  {
+    "id": 7,
+    "question": "Rules:\n1. Courses with labs require lab attendance.\n2. Online students are exempt from lab attendance.\n3. Hybrid students are not considered online students.\n\nStudent:\n- Hybrid student enrolled in a course with a lab who skips lab.\n\nIs this allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 8,
+    "question": "Rules:\n1. Discounts apply only to members.\n2. Members must have an active subscription.\n3. Trial subscriptions are not active.\n\nCustomer:\n- Customer on a trial subscription receiving a member discount.\n\nIs this discount valid?",
+    "answer": "No"
+  },
+  {
+    "id": 9,
+    "question": "Rules:\n1. All flights must have a pilot and a co-pilot.\n2. Training flights may have two pilots instead.\n3. Commercial flights are not training flights.\n\nFlight:\n- Commercial flight with two pilots and no co-pilot.\n\nIs this flight compliant?",
+    "answer": "No"
+  },
+  {
+    "id": 10,
+    "question": "Rules:\n1. Passwords must be at least 12 characters long.\n2. Passwords must include a number.\n3. Temporary passwords are exempt from rule 1.\n\nPassword:\n- Temporary password with 8 characters and a number.\n\nIs this password acceptable?",
+    "answer": "Yes"
+  },
+  {
+    "id": 11,
+    "question": "Rules:\n1. All reports must be reviewed.\n2. Senior reports require executive approval.\n3. Draft reports do not require review.\n\nReport:\n- Senior draft report submitted without review or approval.\n\nIs this submission valid?",
+    "answer": "No"
+  },
+  {
+    "id": 12,
+    "question": "Rules:\n1. All attendees must register in advance.\n2. Walk-ins are allowed for free events.\n3. This event is not free.\n\nAttendee:\n- Walk-in attendee at a paid event.\n\nIs this attendee allowed entry?",
+    "answer": "No"
+  },
+  {
+    "id": 13,
+    "question": "Rules:\n1. Only certified staff may operate machinery.\n2. Trainees may operate machinery under supervision.\n3. This operation was unsupervised.\n\nScenario:\n- A trainee operates machinery without supervision.\n\nIs this allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 14,
+    "question": "Rules:\n1. Refunds are issued only within 30 days of purchase.\n2. Defective items are exempt from rule 1.\n\nPurchase:\n- Defective item returned after 45 days.\n\nIs a refund allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 15,
+    "question": "Rules:\n1. Employees must submit travel receipts.\n2. Receipts are not required for trips under $20.\n\nTrip:\n- $15 travel expense submitted without a receipt.\n\nIs this compliant?",
+    "answer": "Yes"
+  },
+  {
+    "id": 16,
+    "question": "Rules:\n1. Access badges are required after 6 PM.\n2. Security staff are exempt from badge requirements.\n\nPerson:\n- Security staff entering at 7 PM without a badge.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 17,
+    "question": "Rules:\n1. Only full-time students may live on campus.\n2. Exchange students are considered full-time.\n\nStudent:\n- Exchange student living on campus.\n\nIs this permitted?",
+    "answer": "Yes"
+  },
+  {
+    "id": 18,
+    "question": "Rules:\n1. All software changes require approval.\n2. Emergency fixes may bypass approval.\n3. This change was not an emergency.\n\nChange:\n- Software update deployed without approval.\n\nIs this allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 19,
+    "question": "Rules:\n1. Food deliveries must arrive before noon.\n2. Refrigerated items may arrive until 2 PM.\n\nDelivery:\n- Refrigerated food arrives at 1:30 PM.\n\nIs this acceptable?",
+    "answer": "Yes"
+  },
+  {
+    "id": 20,
+    "question": "Rules:\n1. Only administrators can delete records.\n2. Temporary administrators have full privileges.\n\nUser:\n- Temporary administrator deletes a record.\n\nIs this permitted?",
+    "answer": "Yes"
+  },
+  {
+    "id": 21,
+    "question": "Rules:\n1. All contractors must sign a confidentiality agreement.\n2. Contractors with expired agreements may not access internal systems.\n\nContractor:\n- Contractor with an expired confidentiality agreement accesses the internal system.\n\nIs this allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 22,
+    "question": "Rules:\n1. Employees may work remotely on Mondays and Fridays.\n2. Team leads must be on-site on Mondays.\n\nEmployee:\n- Team lead working remotely on Monday.\n\nIs this compliant?",
+    "answer": "No"
+  },
+  {
+    "id": 23,
+    "question": "Rules:\n1. All invoices must be approved before payment.\n2. Invoices under $100 do not require approval.\n\nInvoice:\n- $75 invoice paid without approval.\n\nIs this payment valid?",
+    "answer": "Yes"
+  },
+  {
+    "id": 24,
+    "question": "Rules:\n1. Visitors must be accompanied at all times.\n2. Employees may visit unaccompanied.\n\nPerson:\n- Visitor walking alone in the building.\n\nIs this permitted?",
+    "answer": "No"
+  },
+  {
+    "id": 25,
+    "question": "Rules:\n1. All purchases require a receipt.\n2. Cash purchases under $10 are exempt.\n\nPurchase:\n- $8 cash purchase without a receipt.\n\nIs this acceptable?",
+    "answer": "Yes"
+  },
+  {
+    "id": 26,
+    "question": "Rules:\n1. All training sessions must be completed annually.\n2. New hires are exempt during their first month.\n\nEmployee:\n- New hire skips training during their first two weeks.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 27,
+    "question": "Rules:\n1. All software licenses must be renewed yearly.\n2. Expired licenses may not be used.\n\nSoftware:\n- Software with an expired license is actively used.\n\nIs this permitted?",
+    "answer": "No"
+  },
+  {
+    "id": 28,
+    "question": "Rules:\n1. Safety gear must be worn in restricted zones.\n2. Supervisors are exempt from this requirement.\n\nPerson:\n- Supervisor enters a restricted zone without safety gear.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 29,
+    "question": "Rules:\n1. Reports must be submitted by Friday.\n2. Extensions may be granted by a manager.\n\nReport:\n- Report submitted on Monday with a manager-approved extension.\n\nIs this submission valid?",
+    "answer": "Yes"
+  },
+  {
+    "id": 30,
+    "question": "Rules:\n1. Only certified drivers may operate company vehicles.\n2. Certification expires after two years.\n\nDriver:\n- Driver with expired certification operates a company vehicle.\n\nIs this allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 31,
+    "question": "Rules:\n1. All meetings must have an agenda.\n2. Informal meetings are exempt.\n\nMeeting:\n- Informal meeting held without an agenda.\n\nIs this compliant?",
+    "answer": "Yes"
+  },
+  {
+    "id": 32,
+    "question": "Rules:\n1. Employees must submit expense reports monthly.\n2. Late reports require justification.\n\nReport:\n- Expense report submitted late without justification.\n\nIs this acceptable?",
+    "answer": "No"
+  },
+  {
+    "id": 33,
+    "question": "Rules:\n1. All users must change passwords every 90 days.\n2. Service accounts are exempt.\n\nAccount:\n- Service account retains the same password for over a year.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 34,
+    "question": "Rules:\n1. Confidential documents must be encrypted.\n2. Public documents do not require encryption.\n\nDocument:\n- Confidential document stored unencrypted.\n\nIs this compliant?",
+    "answer": "No"
+  },
+  {
+    "id": 35,
+    "question": "Rules:\n1. Overtime requires prior approval.\n2. Emergency work is exempt from approval.\n\nWork:\n- Employee works overtime during an emergency without approval.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 36,
+    "question": "Rules:\n1. Equipment checks must be logged daily.\n2. Automated systems log checks automatically.\n\nEquipment:\n- Automated system performs checks without manual logging.\n\nIs this acceptable?",
+    "answer": "Yes"
+  },
+  {
+    "id": 37,
+    "question": "Rules:\n1. Only authorized staff may access the server room.\n2. Authorization must be renewed annually.\n\nStaff:\n- Authorized staff with expired authorization accesses the server room.\n\nIs this allowed?",
+    "answer": "No"
+  },
+  {
+    "id": 38,
+    "question": "Rules:\n1. All presentations must be reviewed before delivery.\n2. Internal team updates are exempt.\n\nPresentation:\n- Internal team update presented without review.\n\nIs this permitted?",
+    "answer": "Yes"
+  },
+  {
+    "id": 39,
+    "question": "Rules:\n1. Travel requests must be submitted two weeks in advance.\n2. Last-minute travel is allowed for executives.\n\nTravel:\n- Executive submits a travel request three days in advance.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 40,
+    "question": "Rules:\n1. Data backups must occur weekly.\n2. Manual backups are required if automated backups fail.\n\nSystem:\n- Automated backup fails and no manual backup is performed.\n\nIs this compliant?",
+    "answer": "No"
+  },
+  {
+    "id": 41,
+    "question": "Rules:\n1. Only licensed software may be installed.\n2. Trial software may be installed temporarily.\n\nSoftware:\n- Trial software installed for evaluation.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 42,
+    "question": "Rules:\n1. All complaints must be logged.\n2. Anonymous complaints are exempt from logging.\n\nComplaint:\n- Anonymous complaint not logged.\n\nIs this acceptable?",
+    "answer": "Yes"
+  },
+  {
+    "id": 43,
+    "question": "Rules:\n1. Employees must attend quarterly meetings.\n2. Employees on leave are exempt.\n\nEmployee:\n- Employee on leave misses the quarterly meeting.\n\nIs this compliant?",
+    "answer": "Yes"
+  },
+  {
+    "id": 44,
+    "question": "Rules:\n1. All contracts must be signed by both parties.\n2. Digital signatures are acceptable.\n\nContract:\n- Contract signed digitally by both parties.\n\nIs this valid?",
+    "answer": "Yes"
+  },
+  {
+    "id": 45,
+    "question": "Rules:\n1. System updates must be tested before deployment.\n2. Critical security patches may skip testing.\n\nUpdate:\n- Critical security patch deployed without testing.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 46,
+    "question": "Rules:\n1. All interns must be supervised.\n2. Interns working remotely are exempt from supervision.\n\nIntern:\n- Remote intern works without supervision.\n\nIs this acceptable?",
+    "answer": "Yes"
+  },
+  {
+    "id": 47,
+    "question": "Rules:\n1. Employees must wear badges in secure areas.\n2. Security personnel are exempt.\n\nPerson:\n- Security personnel in a secure area without a badge.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 48,
+    "question": "Rules:\n1. Financial reports must be archived for seven years.\n2. Draft reports are exempt from archiving.\n\nReport:\n- Final financial report deleted after three years.\n\nIs this compliant?",
+    "answer": "No"
+  },
+  {
+    "id": 49,
+    "question": "Rules:\n1. Employees must complete safety training annually.\n2. Contractors are exempt.\n\nPerson:\n- Contractor skips annual safety training.\n\nIs this allowed?",
+    "answer": "Yes"
+  },
+  {
+    "id": 50,
+    "question": "Rules:\n1. All meetings must start on time.\n2. Meetings delayed by technical issues are exempt.\n\nMeeting:\n- Meeting starts late due to a projector malfunction.\n\nIs this compliant?",
+    "answer": "Yes"
+  }
+]
