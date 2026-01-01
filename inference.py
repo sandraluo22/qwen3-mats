@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Inference script for Qwen3-4B-Thinking-2507 model with basic mathematics prompts.
-Optimized for RunPod GPU instances.
 """
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -33,7 +32,6 @@ def check_gpu():
         return True
     else:
         print("✗ CUDA is not available. Will use CPU (slow).")
-        print("  Make sure you're running on a GPU instance (e.g., RunPod with GPU).")
         print("=" * 60)
         return False
 
@@ -41,7 +39,6 @@ def check_gpu():
 def run_inference(prompt: str, model_name: str = "Qwen/Qwen3-4B-Thinking-2507", max_new_tokens: int = 512):
     """
     Run inference with Qwen3-4B-Thinking-2507 model.
-    Optimized for GPU inference on RunPod.
     
     Args:
         prompt: The mathematics prompt/question
@@ -136,10 +133,6 @@ def main():
     
     # Or uncomment to use a custom prompt:
     # prompt = "What is 42 + 58?"
-    
-    # Check if running on RunPod (optional environment check)
-    if os.getenv("RUNPOD_POD_ID"):
-        print(f"Running on RunPod Pod: {os.getenv('RUNPOD_POD_ID')}")
     
     try:
         response = run_inference(prompt)
