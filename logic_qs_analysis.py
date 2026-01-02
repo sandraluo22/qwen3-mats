@@ -199,10 +199,21 @@ class Qwen3LogitExtractor:
 class LogicQuestionsAnalyzer:
     """Main analyzer for logic questions."""
     
-    def __init__(self, model_name: str = "Qwen/Qwen3-4B-Thinking-2507"):
+    def __init__(self, model_name: str = "Qwen/Qwen3-4B-Thinking-2507", use_logits: bool = False):
+        """
+        Initialize the analyzer.
+        
+        Args:
+            model_name: Name of the model to use
+            use_logits: If True, extract logit probabilities. If False, just extract Yes/No answers.
+        """
         self.llm = Qwen3Inference(model_name)
         self.extractor = ChainOfThoughtExtractor()
-        self.logit_extractor = Qwen3LogitExtractor(model_name)
+        self.use_logits = use_logits
+        if use_logits:
+            self.logit_extractor = Qwen3LogitExtractor(model_name)
+        else:
+            self.logit_extractor = None
         self.results = []
     
     def load_logic_questions(self, json_file: str = "logic_qs.json") -> List[Dict]:
@@ -215,13 +226,68 @@ class LogicQuestionsAnalyzer:
     
     def create_prompt(self, question: str, partial_cot: Optional[List[str]] = None) -> str:
         """Create a prompt for the model."""
-        base_prompt = f"{question}\n\nAnswer Yes or No:"
+        instructions = """Solve the following math problem step by step. Use at most 7 sentences total for your entire reasoning sequence."""
+        base_prompt = f"{question}\n\n{instructions}"
         
         if partial_cot:
             cot_text = " ".join(partial_cot)
-            base_prompt = f"{question}\n\nReasoning: {cot_text}\n\nAnswer Yes or No:"
+            base_prompt = f"{question}\n\nReasoning: {cot_text}\n\n{instructions}"
         
         return base_prompt
+    
+    def extract_yes_no_answer(self, text: str) -> Optional[str]:
+        """Extract Yes or No from generated text."""
+        text_lower = text.lower().strip()
+        # Check for Yes/No at the start or after common patterns
+        if text_lower.startswith('yes') or ' answer: yes' in text_lower or 'answer is yes' in text_lower:
+            return "Yes"
+        elif text_lower.startswith('no') or ' answer: no' in text_lower or 'answer is no' in text_lower:
+            return "No"
+        return None
+    
+    def get_answer_from_partial_cot(self, question: str, partial_cot: List[str]) -> Dict:
+        """Force a final Yes/No answer from partial chain of thought, return just the answer."""
+        prompt = self.create_prompt(question, partial_cot)
+        # Add instruction to provide final answer
+        prompt += "\n\n Regardless of where you are right now, answer Yes or No based on the above reasoning:"
+        
+        # Generate a response (with lower temperature for more deterministic "forced" answer)
+        generated_response = self.llm.generate(prompt, max_new_tokens=1, temperature=0.3)
+        
+        # Extract Yes/No from the response
+        answer = self.extract_yes_no_answer(generated_response)
+        return {'answer': answer, 'generated_text': generated_response}
+    
+    def resample_answers(
+        self, 
+        question: str, 
+        partial_cot: List[str], 
+        num_resamples: int = 10
+    ) -> List[Dict]:
+        """
+        Resample Yes/No answers multiple times given partial chain of thought.
+        Generates different responses and extracts Yes/No from each.
+        Returns: list of answer dictionaries
+        """
+        prompt = self.create_prompt(question, partial_cot)
+        # Add instruction to provide final answer
+        prompt += "\n\nBased on the above reasoning, answer Yes or No:"
+        
+        answer_responses = []
+        
+        for i in range(num_resamples):
+            # Generate a response (this will be random due to temperature/sampling)
+            generated_response = self.llm.generate(prompt, max_new_tokens=512, temperature=0.7)
+            
+            # Extract Yes/No from the response
+            answer = self.extract_yes_no_answer(generated_response)
+            answer_responses.append({'answer': answer, 'generated_text': generated_response})
+            
+            # Clear GPU cache after each resample
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        
+        return answer_responses
     
     def resample_logits(
         self, 
@@ -231,6 +297,7 @@ class LogicQuestionsAnalyzer:
     ) -> List[Dict]:
         """
         Resample logits multiple times given partial chain of thought.
+        Generates different responses and extracts logits from each.
         Returns: list of logit dictionaries
         """
         prompt = self.create_prompt(question, partial_cot)
@@ -240,7 +307,12 @@ class LogicQuestionsAnalyzer:
         logit_responses = []
         
         for i in range(num_resamples):
-            logit_data = self.logit_extractor.get_logit_probabilities(prompt)
+            # Generate a response (this will be random due to temperature/sampling)
+            generated_response = self.llm.generate(prompt, max_new_tokens=512, temperature=0.7)
+            
+            # Extract logits from the prompt + generated response
+            full_text = prompt + generated_response
+            logit_data = self.logit_extractor.get_logit_probabilities(full_text)
             logit_responses.append(logit_data)
             
             # Clear GPU cache after each resample
@@ -253,9 +325,14 @@ class LogicQuestionsAnalyzer:
         """Force a final Yes/No answer from partial chain of thought, then extract logits."""
         prompt = self.create_prompt(question, partial_cot)
         # Add instruction to provide final answer
-        prompt += "\n\nBased on the above reasoning, answer Yes or No:"
+        prompt += "\n\n Regardless of where you are right now, answer Yes or No based on the above reasoning:"
         
-        logit_data = self.logit_extractor.get_logit_probabilities(prompt)
+        # Generate a response (with lower temperature for more deterministic "forced" answer)
+        generated_response = self.llm.generate(prompt, max_new_tokens=1, temperature=0.3)
+        
+        # Extract logits from the prompt + generated response
+        full_text = prompt + generated_response
+        logit_data = self.logit_extractor.get_logit_probabilities(full_text)
         return logit_data
     
     def analyze_question(self, question_data: Dict) -> Dict:
@@ -264,14 +341,14 @@ class LogicQuestionsAnalyzer:
         
         # Step 1: Get initial solution with full chain of thought
         initial_prompt = self.create_prompt(question_data['question'])
-        full_response = self.llm.generate(initial_prompt, max_new_tokens=4096, temperature=0.7)
+        full_response = self.llm.generate(initial_prompt, max_new_tokens=512, temperature=0.7)
         
         # Step 2: Extract chain of thought sentences
         cot_sentences = self.extractor.extract_sentences(full_response)
         
         print(f"  Extracted {len(cot_sentences)} chain of thought sentences")
         
-        # Step 3: For each sentence, force Yes/No and resample 10 times
+        # Step 3: For each sentence, force Yes/No and resample 3 times
         sentence_analyses = []
         
         for i, sentence_idx in enumerate(range(len(cot_sentences))):
@@ -280,18 +357,32 @@ class LogicQuestionsAnalyzer:
             # Get partial chain of thought up to this sentence
             partial_cot = cot_sentences[:sentence_idx + 1]
             
-            # Force Yes/No answer and extract logits (once)
-            forced_logits = self.get_logits_from_partial_cot(
-                question_data['question'],
-                partial_cot
-            )
-            
-            # Resample 10 times
-            resampled_logits = self.resample_logits(
-                question_data['question'], 
-                partial_cot,
-                num_resamples=10
-            )
+            if self.use_logits:
+                # Force Yes/No answer and extract logits (once)
+                forced_data = self.get_logits_from_partial_cot(
+                    question_data['question'],
+                    partial_cot
+                )
+                
+                # Resample 3 times
+                resampled_data = self.resample_logits(
+                    question_data['question'], 
+                    partial_cot,
+                    num_resamples=3
+                )
+            else:
+                # Force Yes/No answer and extract just the answer
+                forced_data = self.get_answer_from_partial_cot(
+                    question_data['question'],
+                    partial_cot
+                )
+                
+                # Resample 3 times
+                resampled_data = self.resample_answers(
+                    question_data['question'], 
+                    partial_cot,
+                    num_resamples=3
+                )
             
             # Clear GPU cache after processing each sentence
             if torch.cuda.is_available():
@@ -301,20 +392,23 @@ class LogicQuestionsAnalyzer:
                 'sentence_index': sentence_idx,
                 'sentence': cot_sentences[sentence_idx],
                 'partial_cot': partial_cot,
-                'forced_logits': forced_logits,
-                'resampled_logits': resampled_logits,
+                'forced_data': forced_data,
+                'resampled_data': resampled_data,
             })
         
-        # Determine predicted answer based on final forced logits
+        # Determine predicted answer
         if sentence_analyses:
-            final_forced_logits = sentence_analyses[-1]['forced_logits']
-            if final_forced_logits.get('yes_prob') is not None and final_forced_logits.get('no_prob') is not None:
-                if final_forced_logits['yes_prob'] > final_forced_logits['no_prob']:
-                    predicted_answer = "Yes"
+            final_forced_data = sentence_analyses[-1]['forced_data']
+            if self.use_logits:
+                if final_forced_data.get('yes_prob') is not None and final_forced_data.get('no_prob') is not None:
+                    if final_forced_data['yes_prob'] > final_forced_data['no_prob']:
+                        predicted_answer = "Yes"
+                    else:
+                        predicted_answer = "No"
                 else:
-                    predicted_answer = "No"
+                    predicted_answer = None
             else:
-                predicted_answer = None
+                predicted_answer = final_forced_data.get('answer')
         else:
             predicted_answer = None
         
@@ -332,9 +426,12 @@ class LogicQuestionsAnalyzer:
             'sentence_analyses': sentence_analyses,
         }
         
-        final_prob = sentence_analyses[-1]['forced_logits'].get('yes_prob', 0) if sentence_analyses else 0
-        print(f"  Correct: {question_data['answer']}, Predicted: {predicted_answer}, "
-              f"Yes prob: {final_prob:.4f}")
+        if self.use_logits and sentence_analyses:
+            final_prob = sentence_analyses[-1]['forced_data'].get('yes_prob', 0)
+            print(f"  Correct: {question_data['answer']}, Predicted: {predicted_answer}, "
+                  f"Yes prob: {final_prob:.4f}")
+        else:
+            print(f"  Correct: {question_data['answer']}, Predicted: {predicted_answer}")
         
         return result
     
@@ -347,8 +444,8 @@ class LogicQuestionsAnalyzer:
         # Load questions
         questions = self.load_logic_questions(json_file)
         
-        # Analyze first 30 questions
-        for question_data in questions[:30]:
+        # Analyze all questions
+        for question_data in questions:
             try:
                 result = self.analyze_question(question_data)
                 self.results.append(result)
@@ -386,7 +483,8 @@ class LogicQuestionsAnalyzer:
 
 def main():
     """Main entry point."""
-    analyzer = LogicQuestionsAnalyzer()
+    # Set use_logits=True to get logit probabilities, False for Yes/No answers only (default)
+    analyzer = LogicQuestionsAnalyzer(use_logits=False)  # Change to True for logit mode
     analyzer.run_analysis()
 
 
