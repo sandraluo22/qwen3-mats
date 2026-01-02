@@ -36,7 +36,7 @@ class Qwen3Inference:
         
         print("Model loaded successfully!")
     
-    def generate(self, prompt: str, max_new_tokens: int = 2048, temperature: float = 0.7) -> str:
+    def generate(self, prompt: str, max_new_tokens: int = 512, temperature: float = 0.7) -> str:
         """Generate a response from the model."""
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
         
@@ -49,16 +49,7 @@ class Qwen3Inference:
                 pad_token_id=self.tokenizer.eos_token_id,
             )
         
-        # Move outputs to CPU immediately to free GPU memory
-        output_ids = outputs[0][inputs['input_ids'].shape[1]:].cpu()
-        
-        # Clear GPU cache
-        if self.device == "cuda":
-            del outputs, inputs
-            torch.cuda.empty_cache()
-        
-        # Decode on CPU
-        response = self.tokenizer.decode(output_ids, skip_special_tokens=True)
+        response = self.tokenizer.decode(outputs[0][inputs['input_ids'].shape[1]:], skip_special_tokens=True)
         return response.strip()
 
 
@@ -153,7 +144,7 @@ class GSM8KAnalyzer:
         
         if partial_cot:
             cot_text = " ".join(partial_cot)
-            base_prompt = f"Solve the following math problem step by step.\n\nProblem: {problem}\n\nSolution: {cot_text}"
+            base_prompt = f"Solve the following math problem step by step. Use at most 15 sentences.\n\nProblem: {problem}\n\nSolution: {cot_text}"
         
         return base_prompt
     
@@ -164,31 +155,21 @@ class GSM8KAnalyzer:
         max_resamples: int = 10
     ) -> Tuple[List[str], str]:
         """
-        Resample the question given partial chain of thought until stabilized answer.
-        Returns: (list of all responses, stabilized answer)
+        Resample the question given partial chain of thought 10 times.
+        Returns: (list of all responses, most common answer)
         """
         prompt = self.create_prompt(problem, partial_cot)
         responses = []
         answers = []
         
         for i in range(max_resamples):
-            response = self.llm.generate(prompt, max_new_tokens=2048, temperature=0.7)
+            response = self.llm.generate(prompt, max_new_tokens=256, temperature=0.7)
             responses.append(response)
             answer = self.extractor.extract_final_answer(response)
             if answer:
                 answers.append(answer)
-            
-            # Clear GPU cache after each resample to free memory
-            if self.llm.device == "cuda":
-                torch.cuda.empty_cache()
-            
-            # Check for stabilization: if we have at least 3 answers and the last 3 are the same
-            if len(answers) >= 3:
-                last_three = answers[-3:]
-                if len(set(last_three)) == 1:
-                    return responses, answers[-1]
         
-        # If not stabilized, return the most common answer
+        # Return the most common answer
         if answers:
             answer_counts = defaultdict(int)
             for ans in answers:
@@ -204,7 +185,7 @@ class GSM8KAnalyzer:
         # Add instruction to provide final answer
         prompt += "\n\nBased on the above reasoning, what is the final answer? Provide only the numerical answer."
         
-        response = self.llm.generate(prompt, max_new_tokens=2048, temperature=0.3)
+        response = self.llm.generate(prompt, max_new_tokens=50, temperature=0.3)
         answer = self.extractor.extract_final_answer(response)
         return answer if answer else response.strip()
     
@@ -214,11 +195,7 @@ class GSM8KAnalyzer:
         
         # Step 1: Get initial solution with full chain of thought
         initial_prompt = self.create_prompt(problem_data['problem'])
-        full_response = self.llm.generate(initial_prompt, max_new_tokens=2048, temperature=0.7)
-        
-        # Clear GPU cache after initial generation
-        if self.llm.device == "cuda":
-            torch.cuda.empty_cache()
+        full_response = self.llm.generate(initial_prompt, max_new_tokens=512, temperature=0.7)
         
         # Step 2: Extract chain of thought sentences
         cot_sentences = self.extractor.extract_sentences(full_response)
@@ -255,10 +232,6 @@ class GSM8KAnalyzer:
                 'stabilized_answer': stabilized_answer,
                 'forced_answer': forced_answer,
             })
-            
-            # Clear GPU cache after each sentence analysis
-            if self.llm.device == "cuda":
-                torch.cuda.empty_cache()
         
         # Compile results
         result = {
